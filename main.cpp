@@ -6,7 +6,74 @@
 #include <vector>
 #include <string_view>
 #include <algorithm>
+#include <fstream>
+#include <string>
 
+
+static bool contains(const std::string& str, const std::string_view fragment)
+{
+    return str.find(fragment) != std::string::npos;
+}
+
+class ShaderProgramSource
+{
+public:
+    explicit ShaderProgramSource(
+            std::string vertexSource,
+            std::string fragmentSource)
+            : vertexSource_(std::move(vertexSource))
+            , fragmentSource_(std::move(fragmentSource))
+    {}
+
+    [[nodiscard]]
+    const std::string& VertexSource() const { return vertexSource_; }
+
+    [[nodiscard]]
+    const std::string& FragmentSource() const { return fragmentSource_; }
+
+private:
+    std::string vertexSource_;
+    std::string fragmentSource_;
+};
+
+
+static ShaderProgramSource ParseShader(const std::string& filepath)
+{
+    std::ifstream file(filepath);
+
+    enum class ShaderType
+    {
+        NONE = -1,
+        VERTEX = 0,
+        FRAGMENT = 1
+    };
+
+    std::string line;
+    std::string strs[2];
+    ShaderType type = ShaderType::NONE;
+    while(std::getline(file, line))
+    {
+        if(contains(line, "#shader"))
+        {
+            if(contains(line, "vertex"))
+                type = ShaderType::VERTEX;
+            else if(contains(line, "fragment"))
+                type = ShaderType::FRAGMENT;
+            else
+                throw std::runtime_error("unknown shader type");
+        }
+        else
+        {
+            auto& str = strs[static_cast<int>(type)];
+            str += line;
+            str += '\n';
+        }
+    }
+
+    return ShaderProgramSource(
+            std::move(strs[static_cast<int>(ShaderType::VERTEX)]),
+            std::move(strs[static_cast<int>(ShaderType::FRAGMENT)]));
+}
 
 static unsigned int CompileShader(unsigned int type, const std::string_view source)
 {
@@ -88,32 +155,14 @@ int main()
     unsigned int buffer{0};
     glGenBuffers(1, &buffer);
     glBindBuffer(GL_ARRAY_BUFFER, buffer);
-    glBufferData(GL_ARRAY_BUFFER, std::size(positions), std::data(positions), GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, std::size(positions) * sizeof(float), std::data(positions), GL_STATIC_DRAW);
 
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, nullptr);
 
-    const std::string_view vertexShader =
-            "#version 440 core\n"
-            "\n"
-            "layout(location = 0) in vec4 position;\n"
-            "\n"
-            "void main()\n"
-            "{\n"
-            "    gl_Position = position;\n"
-            "}\n";
-
-    const std::string_view fragmentShader =
-            "#version 440 core\n"
-            "\n"
-            "layout(location = 0) out vec4 color;\n"
-            "\n"
-            "void main()\n"
-            "{\n"
-            "color = vec4(1.0, 1.0, 0.0, 1.0);\n"
-            "}\n";
-
-    glUseProgram(CreateShader(vertexShader, fragmentShader));
+    const auto source = ParseShader("../resources/shaders/Basic.shader");
+    unsigned int shader = CreateShader(source.VertexSource(), source.FragmentSource());
+    glUseProgram(shader);
 
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
@@ -130,6 +179,7 @@ int main()
         glfwPollEvents();
     }
 
+    glDeleteProgram(shader);
     glfwTerminate();
     return 0;
 }
