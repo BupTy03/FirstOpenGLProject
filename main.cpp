@@ -143,6 +143,10 @@ int main()
     if (!glfwInit())
         return -1;
 
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
     /* Create a windowed mode window and its OpenGL context */
     GLFWwindow* window = glfwCreateWindow(640, 480, "Hello World", nullptr, nullptr);
     if (window == nullptr)
@@ -176,6 +180,10 @@ int main()
             2, 3, 0
     };
 
+    unsigned int vertexArrayObject{};
+    GLCall(glGenVertexArrays(1, &vertexArrayObject));
+    GLCall(glBindVertexArray(vertexArrayObject));
+
     unsigned int buffer{0};
     GLCall(glGenBuffers(1, &buffer));
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, buffer));
@@ -184,9 +192,9 @@ int main()
             std::data(positions),
             GL_STATIC_DRAW));
 
-    unsigned int indexBufferObj{0};
-    GLCall(glGenBuffers(1, &indexBufferObj));
-    GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferObj));
+    unsigned int indexBufferObject{0};
+    GLCall(glGenBuffers(1, &indexBufferObject));
+    GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferObject));
     GLCall(glBufferData(GL_ELEMENT_ARRAY_BUFFER,
             std::size(indices) * sizeof(decltype(indices)::value_type),
             std::data(indices),
@@ -203,6 +211,11 @@ int main()
     assert(location != -1);
     GLCall(glUniform4f(location, 0.2f, 0.3f, 0.8f, 1.0f));
 
+    GLCall(glBindVertexArray(0));
+    GLCall(glUseProgram(0));
+    GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+    GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+
     constexpr float delta{0.005f};
     float r{};
     float increment{delta};
@@ -213,7 +226,11 @@ int main()
         /* Render here */
         GLCall(glClear(GL_COLOR_BUFFER_BIT));
 
+        GLCall(glUseProgram(shader));
         GLCall(glUniform4f(location, r, 0.3f, 0.8f, 1.0f));
+
+        GLCall(glBindVertexArray(vertexArrayObject));
+        GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferObject));
         GLCall(glDrawElements(GL_TRIANGLES, std::size(indices), GL_UNSIGNED_INT, nullptr));
 
         if(r > 1.0f) increment = -delta;
