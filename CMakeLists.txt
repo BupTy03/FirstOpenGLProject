@@ -19,7 +19,11 @@ conan_cmake_run(
 conan_define_targets()
 
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-set(SOURCE_FILES main.cpp)
+set(SOURCE_FILES
+        main.cpp
+        Renderer.cpp Renderer.h
+        VertexBuffer.cpp VertexBuffer.h
+        IndexBuffer.cpp IndexBuffer.h)
 
 add_executable(FirstOpenGLProject ${SOURCE_FILES})
 target_link_libraries(FirstOpenGLProject CONAN_PKG::glfw CONAN_PKG::glew)
