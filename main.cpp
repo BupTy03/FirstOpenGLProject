@@ -1,4 +1,6 @@
 #include "Renderer.h"
+#include "VertexArray.h"
+#include "VertexBufferLayout.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 
@@ -165,15 +167,16 @@ int main()
         GLCall(glGenVertexArrays(1, &vertexArrayObject));
         GLCall(glBindVertexArray(vertexArrayObject));
 
-        VertexBuffer buffer(
+        VertexArray va;
+        VertexBuffer vb(
                 std::data(positions),
                 std::size(positions) * sizeof(decltype(positions)::value_type)
         );
+        VertexBufferLayout layout;
+        layout.Push<float>(2);
+        va.AddBuffer(vb, layout);
 
-        IndexBuffer indexBuffer(std::data(indices), std::size(indices));
-
-        GLCall(glEnableVertexAttribArray(0));
-        GLCall(glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, nullptr));
+        IndexBuffer ib(std::data(indices), std::size(indices));
 
         const auto source = ParseShader("../resources/shaders/Basic.shader");
         const unsigned int shader = CreateShader(source.VertexSource(), source.FragmentSource());
@@ -200,8 +203,8 @@ int main()
             GLCall(glUseProgram(shader));
             GLCall(glUniform4f(location, r, 0.3f, 0.8f, 1.0f));
 
-            GLCall(glBindVertexArray(vertexArrayObject));
-            indexBuffer.Bind();
+            va.Bind();
+            ib.Bind();
 
             GLCall(glDrawElements(GL_TRIANGLES, std::size(indices), GL_UNSIGNED_INT, nullptr));
 

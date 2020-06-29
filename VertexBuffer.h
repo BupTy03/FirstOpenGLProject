@@ -20,5 +20,6 @@ public:
     void Unbind();
 
 private:
+    bool bound_;
     unsigned int rendererID_;
 };

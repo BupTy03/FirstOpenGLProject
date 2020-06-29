@@ -23,6 +23,7 @@ public:
     unsigned int Count() const;
 
 private:
+    bool bound_;
     unsigned int rendererID_;
     unsigned int indexCount_;
 };

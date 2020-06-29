@@ -5,7 +5,8 @@
 
 
 VertexBuffer::VertexBuffer(const void* data, unsigned int size)
-    : rendererID_{0}
+    : bound_{true}
+    , rendererID_{0}
 {
     GLCall(glGenBuffers(1, &rendererID_));
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, rendererID_));
@@ -18,17 +19,18 @@ VertexBuffer::VertexBuffer(const void *data, unsigned int size, VertexBuffer::do
     Unbind();
 }
 
-VertexBuffer::~VertexBuffer()
-{
-    GLCall(glDeleteBuffers(1, &rendererID_));
-}
+VertexBuffer::~VertexBuffer() { GLCall(glDeleteBuffers(1, &rendererID_)); }
 
 void VertexBuffer::Bind()
 {
+    //if(bound_) return;
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, rendererID_));
+    bound_ = true;
 }
 
 void VertexBuffer::Unbind()
 {
+    //if(!bound_) return;
     GLCall(glBindBuffer(GL_ARRAY_BUFFER, 0));
+    bound_ = false;
 }
