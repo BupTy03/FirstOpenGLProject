@@ -13,7 +13,7 @@
 void GLClearAllErrors();
 bool GLCheckErrors();
 
-bool contains(const std::string& str, std::string_view fragment);
+bool contains(std::string_view str, std::string_view fragment);
 
 
 class Renderer

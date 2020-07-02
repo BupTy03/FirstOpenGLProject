@@ -3,6 +3,11 @@
 #include <iostream>
 
 
+bool contains(std::string_view str, const std::string_view fragment)
+{
+    return str.find(fragment) != std::string_view::npos;
+}
+
 void GLClearAllErrors() { while(glGetError() != GL_NO_ERROR){}; }
 
 bool GLCheckErrors()
@@ -18,7 +23,3 @@ bool GLCheckErrors()
     return true;
 }
 
-bool contains(const std::string& str, const std::string_view fragment)
-{
-    return str.find(fragment) != std::string::npos;
-}
