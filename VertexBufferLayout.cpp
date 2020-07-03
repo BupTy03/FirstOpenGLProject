@@ -1,4 +1,5 @@
 #include "VertexBufferLayout.h"
+#include "GLUtils.h"
 
 
 namespace VertexBufferLayoutImpl {

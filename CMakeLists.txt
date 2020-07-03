@@ -23,7 +23,7 @@ set(SOURCE_FILES
         main.cpp
         Renderer.cpp Renderer.h
         VertexBuffer.cpp VertexBuffer.h
-        IndexBuffer.cpp IndexBuffer.h VertexArray.cpp VertexArray.h VertexBufferLayout.cpp VertexBufferLayout.h Shader.cpp Shader.h)
+        IndexBuffer.cpp IndexBuffer.h VertexArray.cpp VertexArray.h VertexBufferLayout.cpp VertexBufferLayout.h Shader.cpp Shader.h GLUtils.h GLUtils.cpp)
 
 add_executable(FirstOpenGLProject ${SOURCE_FILES})
 target_link_libraries(FirstOpenGLProject CONAN_PKG::glfw CONAN_PKG::glew)

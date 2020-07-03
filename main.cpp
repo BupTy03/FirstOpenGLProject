@@ -4,17 +4,13 @@
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 #include "Shader.h"
+#include "GLUtils.h"
 
-#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 #include <iostream>
 #include <array>
-#include <vector>
-#include <string_view>
 #include <algorithm>
-#include <fstream>
-#include <string>
 #include <cassert>
 
 
