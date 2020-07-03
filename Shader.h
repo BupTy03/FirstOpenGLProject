@@ -11,18 +11,10 @@ namespace ShaderImpl
     class ShaderProgramSource
     {
     public:
-        explicit ShaderProgramSource(
-                std::string_view vertexSource,
-                std::string_view fragmentSource)
-                : vertexSource_(vertexSource.begin(), vertexSource.end())
-                , fragmentSource_(fragmentSource.begin(), fragmentSource.end())
-        {}
+        explicit ShaderProgramSource(std::string_view vertexSource, std::string_view fragmentSource);
 
-        [[nodiscard]]
-        const std::string& VertexSource() const { return vertexSource_; }
-
-        [[nodiscard]]
-        const std::string& FragmentSource() const { return fragmentSource_; }
+        [[nodiscard]] const std::string& VertexSource() const;
+        [[nodiscard]] const std::string& FragmentSource() const;
 
     private:
         std::string vertexSource_;

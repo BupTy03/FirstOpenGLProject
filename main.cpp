@@ -86,7 +86,8 @@ int main()
         float increment{delta};
 
         /* Loop until the user closes the window */
-        while (!glfwWindowShouldClose(window)) {
+        while (!glfwWindowShouldClose(window))
+        {
             /* Render here */
             GLCall(glClear(GL_COLOR_BUFFER_BIT));
 

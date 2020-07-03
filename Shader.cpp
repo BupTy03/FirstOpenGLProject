@@ -129,4 +129,20 @@ namespace ShaderImpl {
         return program;
     }
 
+
+    ShaderProgramSource::ShaderProgramSource(std::string_view vertexSource, std::string_view fragmentSource)
+        : vertexSource_(vertexSource.begin(), vertexSource.end())
+        , fragmentSource_(fragmentSource.begin(), fragmentSource.end())
+    {
+    }
+
+    const std::string& ShaderProgramSource::VertexSource() const
+    {
+        return vertexSource_;
+    }
+
+    const std::string& ShaderProgramSource::FragmentSource() const
+    {
+        return fragmentSource_;
+    }
 }
