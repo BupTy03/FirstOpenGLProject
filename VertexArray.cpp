@@ -6,8 +6,7 @@
 
 
 VertexArray::VertexArray()
-    : bound_{false}
-    , rendererID_{0}
+    : rendererID_{0}
 {
     GLCall(glGenVertexArrays(1, &rendererID_));
 }
@@ -16,7 +15,7 @@ VertexArray::~VertexArray() { GLCall(glDeleteVertexArrays(1, &rendererID_)); }
 
 static auto ToGlBool(bool value) { return (value) ? GL_TRUE : GL_FALSE; }
 
-void VertexArray::AddBuffer(VertexBuffer& vb, const VertexBufferLayout& layout)
+void VertexArray::AddBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout)
 {
     Bind();
     vb.Bind();
@@ -39,16 +38,12 @@ void VertexArray::AddBuffer(VertexBuffer& vb, const VertexBufferLayout& layout)
     }
 }
 
-void VertexArray::Bind()
+void VertexArray::Bind() const
 {
-    //if(bound_) return;
     GLCall(glBindVertexArray(rendererID_));
-    bound_ = true;
 }
 
-void VertexArray::Unbind()
+void VertexArray::Unbind() const
 {
-    //if(!bound_) return;
     GLCall(glBindVertexArray(0));
-    bound_ = false;
 }

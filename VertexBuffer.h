@@ -4,10 +4,7 @@
 class VertexBuffer
 {
 public:
-    struct do_not_bind{};
-
     explicit VertexBuffer(const void* data, unsigned int size);
-    explicit VertexBuffer(const void* data, unsigned int size, do_not_bind);
     ~VertexBuffer();
 
     VertexBuffer(const VertexBuffer&) = delete;
@@ -16,10 +13,9 @@ public:
     VertexBuffer(VertexBuffer&&) = delete;
     VertexBuffer& operator=(VertexBuffer&&) = delete;
 
-    void Bind();
-    void Unbind();
+    void Bind() const;
+    void Unbind() const;
 
 private:
-    bool bound_;
     unsigned int rendererID_;
 };

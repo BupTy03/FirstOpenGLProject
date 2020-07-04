@@ -11,12 +11,11 @@ public:
     VertexArray();
     ~VertexArray();
 
-    void AddBuffer(VertexBuffer& vb, const VertexBufferLayout& layout);
+    void AddBuffer(const VertexBuffer& vb, const VertexBufferLayout& layout);
 
-    void Bind();
-    void Unbind();
+    void Bind() const;
+    void Unbind() const;
 
 private:
-    bool bound_;
     unsigned int rendererID_;
 };

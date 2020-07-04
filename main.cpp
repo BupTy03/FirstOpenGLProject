@@ -4,14 +4,12 @@
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 #include "Shader.h"
-#include "GLUtils.h"
 
 #include <GLFW/glfw3.h>
 
 #include <iostream>
 #include <array>
 #include <algorithm>
-#include <cassert>
 
 
 int main()
@@ -47,9 +45,9 @@ int main()
     {
         constexpr std::array<float, 8> positions = {
                 -0.5f, -0.5f, // 0
-                0.5f, -0.5f, // 1
-                0.5f, 0.5f, // 2
-                -0.5f, 0.5f  // 3
+                 0.5f, -0.5f, // 1
+                 0.5f,  0.5f, // 2
+                -0.5f,  0.5f  // 3
         };
 
         constexpr std::array<unsigned int, 6> indices = {
@@ -73,9 +71,11 @@ int main()
         shader.SetUniform4f("u_Color", 0.2f, 0.3f, 0.8f, 1.0f);
 
         va.Unbind();
-        shader.Unbind();
         vb.Unbind();
         ib.Unbind();
+        shader.Unbind();
+
+        Renderer renderer;
 
         constexpr float delta{0.005f};
         float r{};
@@ -85,15 +85,12 @@ int main()
         while (!glfwWindowShouldClose(window))
         {
             /* Render here */
-            GLCall(glClear(GL_COLOR_BUFFER_BIT));
+            renderer.Clear();
 
             shader.Bind();
             shader.SetUniform4f("u_Color", r, 0.3f, 0.8f, 1.0f);
 
-            va.Bind();
-            ib.Bind();
-
-            GLCall(glDrawElements(GL_TRIANGLES, std::size(indices), GL_UNSIGNED_INT, nullptr));
+            renderer.Draw(va, ib, shader);
 
             if (r > 1.0f) increment = -delta;
             else if (r < 0.0f) increment = delta;
