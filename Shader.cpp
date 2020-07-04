@@ -9,21 +9,22 @@
 
 
 Shader::Shader(std::string_view filename)
-    : m_RenderID{0}
-    , m_FilePath(filename.begin(), filename.end())
+    : renderID_{0}
+    , filePath_(filename.begin(), filename.end())
+    , uniformLocationCache_()
 {
-    const auto source = ShaderImpl::ParseShader(m_FilePath);
-    m_RenderID = ShaderImpl::CreateShader(source.VertexSource(), source.FragmentSource());
+    const auto source = ShaderImpl::ParseShader(filePath_);
+    renderID_ = ShaderImpl::CreateShader(source.VertexSource(), source.FragmentSource());
 }
 
 Shader::~Shader()
 {
-    GLCall(glDeleteProgram(m_RenderID));
+    GLCall(glDeleteProgram(renderID_));
 }
 
 void Shader::Bind() const
 {
-    GLCall(glUseProgram(m_RenderID));
+    GLCall(glUseProgram(renderID_));
 }
 
 void Shader::Unbind() const
@@ -31,22 +32,27 @@ void Shader::Unbind() const
     GLCall(glUseProgram(0));
 }
 
-void Shader::SetUniform4f(const std::string& name, float v0, float v1, float v2, float v3)
+int Shader::GetUniformLocation(const std::string& name) const
 {
-    GLCall(glUniform4f(GetUniformLocation(name), v0, v1, v2, v3));
-}
+    auto foundIt = uniformLocationCache_.find(name);
+    if (foundIt != uniformLocationCache_.cend()) return foundIt->second;
 
-unsigned int Shader::GetUniformLocation(const std::string& name)
-{
-    auto foundIt = m_UniformLocationCache.find(name);
-    if(foundIt != m_UniformLocationCache.cend()) return foundIt->second;
-
-    GLCall(const auto location = glGetUniformLocation(m_RenderID, name.c_str()));
-    if(location < 0)
+    GLCall(const auto location = glGetUniformLocation(renderID_, name.c_str()));
+    if (location < 0)
         std::cout << "Warning: uniform '" << name << "' doesn't exist!" << std::endl;
 
-    m_UniformLocationCache.emplace(name, location);
+    uniformLocationCache_.emplace(name, location);
     return location;
+}
+
+void Shader::SetUniform(const std::string& name, int v)
+{
+    GLCall(glUniform1i(GetUniformLocation(name), v));
+}
+
+void Shader::SetUniform(const std::string& name, const std::tuple<float, float, float, float>& v)
+{
+    GLCall(glUniform4f(GetUniformLocation(name), std::get<0>(v), std::get<1>(v), std::get<2>(v), std::get<3>(v)));
 }
 
 

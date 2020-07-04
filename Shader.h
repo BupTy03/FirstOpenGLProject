@@ -1,5 +1,6 @@
 #pragma once
 
+#include <tuple>
 #include <string>
 #include <string_view>
 #include <unordered_map>
@@ -36,13 +37,14 @@ public:
     void Bind() const;
     void Unbind() const;
 
-    void SetUniform4f(const std::string& name, float v0, float v1, float v2, float v3);
+    void SetUniform(const std::string& name, int v);
+    void SetUniform(const std::string& name, const std::tuple<float, float, float, float>& v);
 
 private:
-    unsigned int GetUniformLocation(const std::string& name);
+    int GetUniformLocation(const std::string& name) const;
 
 private:
-    unsigned int m_RenderID;
-    std::string m_FilePath;
-    std::unordered_map<std::string, int> m_UniformLocationCache;
+    unsigned int renderID_;
+    std::string filePath_;
+    mutable std::unordered_map<std::string, int> uniformLocationCache_;
 };
