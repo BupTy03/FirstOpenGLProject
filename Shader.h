@@ -1,5 +1,7 @@
 #pragma once
 
+#include "glm/glm.hpp"
+
 #include <tuple>
 #include <string>
 #include <string_view>
@@ -39,6 +41,7 @@ public:
 
     void SetUniform(const std::string& name, int v);
     void SetUniform(const std::string& name, const std::tuple<float, float, float, float>& v);
+    void SetUniform(const std::string& name, const glm::mat4& m);
 
 private:
     int GetUniformLocation(const std::string& name) const;

@@ -55,6 +55,11 @@ void Shader::SetUniform(const std::string& name, const std::tuple<float, float, 
     GLCall(glUniform4f(GetUniformLocation(name), std::get<0>(v), std::get<1>(v), std::get<2>(v), std::get<3>(v)));
 }
 
+void Shader::SetUniform(const std::string& name, const glm::mat4& m)
+{
+    glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, std::data(m));
+}
+
 
 namespace ShaderImpl {
 

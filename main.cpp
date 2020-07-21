@@ -9,6 +9,9 @@
 
 #include <GLFW/glfw3.h>
 
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+
 #include <iostream>
 #include <array>
 #include <algorithm>
@@ -72,9 +75,12 @@ int main()
 
         IndexBuffer ib(std::data(indices), std::size(indices));
 
+        glm::mat4 proj = glm::ortho(-2.0f, 2.0f, -1.5f, 1.5f, -1.0f, 1.0f);
+
         Shader shader("../resources/shaders/Basic.shader");
         shader.Bind();
         shader.SetUniform("u_Color", {0.2f, 0.3f, 0.8f, 1.0f});
+        shader.SetUniform("u_MVP", proj);
 
         Texture texture("../resources/textures/batman_vs_superman.png");
         texture.Bind(0);

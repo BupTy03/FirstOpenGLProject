@@ -15,6 +15,7 @@ include(${CMAKE_BINARY_DIR}/conan.cmake)
 conan_cmake_run(
         REQUIRES glfw/3.3.2@bincrafters/stable
                  glew/2.1.0@bincrafters/stable
+                 glm/0.9.9.5@g-truc/stable
         BUILD missing)
 conan_define_targets()
 
@@ -33,4 +34,4 @@ set(SOURCE_FILES
         Size2.h ScopeExit.h)
 
 add_executable(FirstOpenGLProject ${SOURCE_FILES})
-target_link_libraries(FirstOpenGLProject CONAN_PKG::glfw CONAN_PKG::glew)
+target_link_libraries(FirstOpenGLProject CONAN_PKG::glfw CONAN_PKG::glew CONAN_PKG::glm)
