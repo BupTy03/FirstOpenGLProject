@@ -39,6 +39,9 @@ public:
     void Bind() const;
     void Unbind() const;
 
+    template<typename T>
+    void SetUniform(const std::string&, std::initializer_list<T>) = delete;
+
     void SetUniform(const std::string& name, int v);
     void SetUniform(const std::string& name, const std::tuple<float, float, float, float>& v);
     void SetUniform(const std::string& name, const glm::mat4& m);

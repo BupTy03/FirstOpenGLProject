@@ -16,6 +16,7 @@ conan_cmake_run(
         REQUIRES glfw/3.3.2@bincrafters/stable
                  glew/2.1.0@bincrafters/stable
                  glm/0.9.9.5@g-truc/stable
+                 imgui/1.73@bincrafters/stable
         BUILD missing)
 conan_define_targets()
 

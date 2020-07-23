@@ -75,12 +75,15 @@ int main()
 
         IndexBuffer ib(std::data(indices), std::size(indices));
 
-        glm::mat4 proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
+        const auto proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
+        const auto view = glm::translate(glm::mat4{1.0f}, glm::vec3{-100, 0, 0});
+        const auto model = glm::translate(glm::mat4{1.0f}, glm::vec3{200, 200, 0});
+        const auto mvp = proj * view * model;
 
         Shader shader("../resources/shaders/Basic.shader");
         shader.Bind();
-        shader.SetUniform("u_Color", {0.2f, 0.3f, 0.8f, 1.0f});
-        shader.SetUniform("u_MVP", proj);
+        shader.SetUniform("u_Color", std::make_tuple(0.2f, 0.3f, 0.8f, 1.0f));
+        shader.SetUniform("u_MVP", mvp);
 
         Texture texture("../resources/textures/batman_vs_superman.png");
         texture.Bind(0);
@@ -104,7 +107,7 @@ int main()
             renderer.Clear();
 
             shader.Bind();
-            shader.SetUniform("u_Color", {r, 0.3f, 0.8f, 1.0f});
+            shader.SetUniform("u_Color", std::make_tuple(r, 0.3f, 0.8f, 1.0f));
 
             renderer.Draw(va, ib, shader);
 
