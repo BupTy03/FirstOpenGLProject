@@ -16,7 +16,6 @@ conan_cmake_run(
         REQUIRES glfw/3.3.2@bincrafters/stable
                  glew/2.1.0@bincrafters/stable
                  glm/0.9.9.5@g-truc/stable
-                 imgui/1.73@bincrafters/stable
         BUILD missing)
 conan_define_targets()
 
@@ -34,5 +33,16 @@ set(SOURCE_FILES
         Texture.cpp Texture.h
         Size2.h ScopeExit.h)
 
-add_executable(FirstOpenGLProject ${SOURCE_FILES})
+set(IMGUI_FILES
+        imgui/imconfig.h
+        imgui/imgui.cpp imgui/imgui.h
+        imgui/imgui_demo.cpp
+        imgui/imgui_draw.cpp
+        imgui/imgui_impl_glfw_gl3.cpp imgui/imgui_impl_glfw_gl3.cpp
+        imgui/imgui_internal.h
+        imgui/stb_rect_pack.h
+        imgui/stb_textedit.h
+        imgui/stb_truetype.h)
+
+add_executable(FirstOpenGLProject ${SOURCE_FILES} ${IMGUI_FILES})
 target_link_libraries(FirstOpenGLProject CONAN_PKG::glfw CONAN_PKG::glew CONAN_PKG::glm)

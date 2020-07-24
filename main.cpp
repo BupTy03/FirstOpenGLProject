@@ -7,6 +7,9 @@
 #include "Texture.h"
 #include "GLUtils.h"
 
+#include "imgui/imgui.h"
+#include "imgui/imgui_impl_glfw_gl3.h"
+
 #include <GLFW/glfw3.h>
 
 #include "glm/glm.hpp"
@@ -77,13 +80,10 @@ int main()
 
         const auto proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
         const auto view = glm::translate(glm::mat4{1.0f}, glm::vec3{-100, 0, 0});
-        const auto model = glm::translate(glm::mat4{1.0f}, glm::vec3{200, 200, 0});
-        const auto mvp = proj * view * model;
 
         Shader shader("../resources/shaders/Basic.shader");
         shader.Bind();
         shader.SetUniform("u_Color", std::make_tuple(0.2f, 0.3f, 0.8f, 1.0f));
-        shader.SetUniform("u_MVP", mvp);
 
         Texture texture("../resources/textures/batman_vs_superman.png");
         texture.Bind(0);
@@ -96,6 +96,12 @@ int main()
 
         Renderer renderer;
 
+        ImGui::CreateContext();
+        ImGui_ImplGlfwGL3_Init(window, true);
+        ImGui::StyleColorsDark();
+
+        glm::vec3 translation{200, 200, 0};
+
         constexpr float delta{0.005f};
         float r{};
         float increment{delta};
@@ -106,8 +112,14 @@ int main()
             /* Render here */
             renderer.Clear();
 
+            ImGui_ImplGlfwGL3_NewFrame();
+
+            const auto model = glm::translate(glm::mat4{1.0f}, translation);
+            const auto mvp = proj * view * model;
+
             shader.Bind();
             shader.SetUniform("u_Color", std::make_tuple(r, 0.3f, 0.8f, 1.0f));
+            shader.SetUniform("u_MVP", mvp);
 
             renderer.Draw(va, ib, shader);
 
@@ -116,6 +128,12 @@ int main()
 
             r += increment;
 
+            ImGui::SliderFloat3("Translation", &translation.x, 0.0f, 960.0f);
+            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+
+            ImGui::Render();
+            ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
+
             /* Swap front and back buffers */
             glfwSwapBuffers(window);
 
@@ -123,6 +141,9 @@ int main()
             glfwPollEvents();
         }
     }
+
+    ImGui_ImplGlfwGL3_Shutdown();
+    ImGui::DestroyContext();
     glfwTerminate();
     return 0;
 }
