@@ -52,10 +52,10 @@ int main()
     std::cout << glGetString(GL_VERSION) << std::endl;
     {
         constexpr std::array<float, 16> positions = {
-                100.0f, 100.f, 0.0f, 0.0f, // 0
-                 200.0f, 100.0f, 1.0f, 0.0f, // 1
-                 200.0f,  200.0f, 1.0f, 1.0f, // 2
-                100.0f,  200.0f, 0.0f, 1.0f  // 3
+                -50.0f, -50.0f, 0.0f, 0.0f, // 0
+                 50, -50.0f, 1.0f, 0.0f, // 1
+                50,  50, 1.0f, 1.0f, // 2
+                -50.0f,  50, 0.0f, 1.0f  // 3
         };
 
         constexpr std::array<unsigned int, 6> indices = {
@@ -79,7 +79,7 @@ int main()
         IndexBuffer ib(std::data(indices), std::size(indices));
 
         const auto proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
-        const auto view = glm::translate(glm::mat4{1.0f}, glm::vec3{-100, 0, 0});
+        const auto view = glm::translate(glm::mat4{1.0f}, glm::vec3{0, 0, 0});
 
         Shader shader("../resources/shaders/Basic.shader");
         shader.Bind();
@@ -100,7 +100,8 @@ int main()
         ImGui_ImplGlfwGL3_Init(window, true);
         ImGui::StyleColorsDark();
 
-        glm::vec3 translation{200, 200, 0};
+        glm::vec3 translationA{200, 200, 0};
+        glm::vec3 translationB{400, 200, 0};
 
         constexpr float delta{0.005f};
         float r{};
@@ -114,21 +115,27 @@ int main()
 
             ImGui_ImplGlfwGL3_NewFrame();
 
-            const auto model = glm::translate(glm::mat4{1.0f}, translation);
-            const auto mvp = proj * view * model;
+            {
+                const auto model = glm::translate(glm::mat4{1.0f}, translationA);
+                const auto mvp = proj * view * model;
+                shader.SetUniform("u_MVP", mvp);
+                renderer.Draw(va, ib, shader);
+            }
 
-            shader.Bind();
-            shader.SetUniform("u_Color", std::make_tuple(r, 0.3f, 0.8f, 1.0f));
-            shader.SetUniform("u_MVP", mvp);
-
-            renderer.Draw(va, ib, shader);
+            {
+                const auto model = glm::translate(glm::mat4{1.0f}, translationB);
+                const auto mvp = proj * view * model;
+                shader.SetUniform("u_MVP", mvp);
+                renderer.Draw(va, ib, shader);
+            }
 
             if (r > 1.0f) increment = -delta;
             else if (r < 0.0f) increment = delta;
 
             r += increment;
 
-            ImGui::SliderFloat3("Translation", &translation.x, 0.0f, 960.0f);
+            ImGui::SliderFloat3("Translation A", &translationA.x, 0.0f, 960.0f);
+            ImGui::SliderFloat3("Translation B", &translationB.x, 0.0f, 960.0f);
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
 
             ImGui::Render();
