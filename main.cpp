@@ -7,6 +7,8 @@
 #include "Texture.h"
 #include "GLUtils.h"
 
+#include "tests/TestClearColor.h"
+
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw_gl3.h"
 
@@ -30,7 +32,6 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    /* Create a windowed mode window and its OpenGL context */
     GLFWwindow* window = glfwCreateWindow(960, 540, "Hello World", nullptr, nullptr);
     if (window == nullptr)
     {
@@ -38,9 +39,7 @@ int main()
         return -1;
     }
 
-    /* Make the window's context current */
     glfwMakeContextCurrent(window);
-
     glfwSwapInterval(1);
 
     if(glewInit() != GLEW_OK)
@@ -51,48 +50,8 @@ int main()
 
     std::cout << glGetString(GL_VERSION) << std::endl;
     {
-        constexpr std::array<float, 16> positions = {
-                -50.0f, -50.0f, 0.0f, 0.0f, // 0
-                 50, -50.0f, 1.0f, 0.0f, // 1
-                50,  50, 1.0f, 1.0f, // 2
-                -50.0f,  50, 0.0f, 1.0f  // 3
-        };
-
-        constexpr std::array<unsigned int, 6> indices = {
-                0, 1, 2,
-                2, 3, 0
-        };
-
         GLCall(glEnable(GL_BLEND));
         GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-
-        VertexArray va;
-        VertexBuffer vb(
-                std::data(positions),
-                std::size(positions) * sizeof(decltype(positions)::value_type)
-        );
-        VertexBufferLayout layout;
-        layout.Push<float>(2);
-        layout.Push<float>(2);
-        va.AddBuffer(vb, layout);
-
-        IndexBuffer ib(std::data(indices), std::size(indices));
-
-        const auto proj = glm::ortho(0.0f, 960.0f, 0.0f, 540.0f, -1.0f, 1.0f);
-        const auto view = glm::translate(glm::mat4{1.0f}, glm::vec3{0, 0, 0});
-
-        Shader shader("../resources/shaders/Basic.shader");
-        shader.Bind();
-        shader.SetUniform("u_Color", std::make_tuple(0.2f, 0.3f, 0.8f, 1.0f));
-
-        Texture texture("../resources/textures/batman_vs_superman.png");
-        texture.Bind(0);
-        shader.SetUniform("u_Texture", 0);
-
-        va.Unbind();
-        vb.Unbind();
-        ib.Unbind();
-        shader.Unbind();
 
         Renderer renderer;
 
@@ -100,51 +59,22 @@ int main()
         ImGui_ImplGlfwGL3_Init(window, true);
         ImGui::StyleColorsDark();
 
-        glm::vec3 translationA{200, 200, 0};
-        glm::vec3 translationB{400, 200, 0};
+        test::TestClearColor test;
 
-        constexpr float delta{0.005f};
-        float r{};
-        float increment{delta};
-
-        /* Loop until the user closes the window */
         while (!glfwWindowShouldClose(window))
         {
-            /* Render here */
             renderer.Clear();
 
+            test.OnUpdate(0.0);
+            test.OnRender();
+
             ImGui_ImplGlfwGL3_NewFrame();
-
-            {
-                const auto model = glm::translate(glm::mat4{1.0f}, translationA);
-                const auto mvp = proj * view * model;
-                shader.SetUniform("u_MVP", mvp);
-                renderer.Draw(va, ib, shader);
-            }
-
-            {
-                const auto model = glm::translate(glm::mat4{1.0f}, translationB);
-                const auto mvp = proj * view * model;
-                shader.SetUniform("u_MVP", mvp);
-                renderer.Draw(va, ib, shader);
-            }
-
-            if (r > 1.0f) increment = -delta;
-            else if (r < 0.0f) increment = delta;
-
-            r += increment;
-
-            ImGui::SliderFloat3("Translation A", &translationA.x, 0.0f, 960.0f);
-            ImGui::SliderFloat3("Translation B", &translationB.x, 0.0f, 960.0f);
-            ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+            test.OnImGuiRender();
 
             ImGui::Render();
             ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
 
-            /* Swap front and back buffers */
             glfwSwapBuffers(window);
-
-            /* Poll for and process events */
             glfwPollEvents();
         }
     }

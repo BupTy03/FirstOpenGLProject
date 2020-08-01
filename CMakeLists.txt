@@ -33,6 +33,10 @@ set(SOURCE_FILES
         Texture.cpp Texture.h
         Size2.h ScopeExit.h)
 
+set(TESTS
+        tests/Test.h
+        tests/TestClearColor.cpp tests/TestClearColor.h)
+
 set(IMGUI_FILES
         imgui/imconfig.h
         imgui/imgui.cpp imgui/imgui.h
@@ -44,5 +48,6 @@ set(IMGUI_FILES
         imgui/stb_textedit.h
         imgui/stb_truetype.h)
 
-add_executable(FirstOpenGLProject ${SOURCE_FILES} ${IMGUI_FILES})
+add_executable(FirstOpenGLProject ${SOURCE_FILES} ${IMGUI_FILES} ${TESTS})
+target_include_directories(FirstOpenGLProject PRIVATE ".")
 target_link_libraries(FirstOpenGLProject CONAN_PKG::glfw CONAN_PKG::glew CONAN_PKG::glm)
