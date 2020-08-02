@@ -6,8 +6,10 @@
 #include "Shader.h"
 #include "Texture.h"
 #include "GLUtils.h"
+#include "ScopeExit.h"
 
 #include "tests/TestClearColor.h"
+#include "tests/TestMenu.h"
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw_gl3.h"
@@ -48,6 +50,13 @@ int main()
         return -2;
     }
 
+    SCOPE_EXIT
+    {
+        ImGui_ImplGlfwGL3_Shutdown();
+        ImGui::DestroyContext();
+        glfwTerminate();
+    };
+
     std::cout << glGetString(GL_VERSION) << std::endl;
     {
         GLCall(glEnable(GL_BLEND));
@@ -59,17 +68,28 @@ int main()
         ImGui_ImplGlfwGL3_Init(window, true);
         ImGui::StyleColorsDark();
 
-        test::TestClearColor test;
+        test::TestMenu menu;
+        menu.AddTest<test::TestClearColor>("Clear Color");
 
         while (!glfwWindowShouldClose(window))
         {
+            GLCall(glClearColor(0.0f, 0.0f, 0.0f, 1.0f));
             renderer.Clear();
 
-            test.OnUpdate(0.0);
-            test.OnRender();
-
             ImGui_ImplGlfwGL3_NewFrame();
-            test.OnImGuiRender();
+
+            menu.CurrentTest().OnUpdate(0.0f);
+            menu.CurrentTest().OnRender();
+
+            {
+                ImGui::Begin("Test");
+                SCOPE_EXIT { ImGui::End(); };
+
+                if (menu.HasCurrentTest() && ImGui::Button("<-"))
+                    menu.BackToMenu();
+
+                menu.CurrentTest().OnImGuiRender();
+            }
 
             ImGui::Render();
             ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());
@@ -79,8 +99,5 @@ int main()
         }
     }
 
-    ImGui_ImplGlfwGL3_Shutdown();
-    ImGui::DestroyContext();
-    glfwTerminate();
     return 0;
 }

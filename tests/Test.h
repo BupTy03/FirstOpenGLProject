@@ -1,8 +1,13 @@
 #pragma once
 
+#include <memory>
+
 
 namespace test
 {
+    class Test;
+    using TestPtr = std::unique_ptr<Test>;
+
     class Test
     {
     public:

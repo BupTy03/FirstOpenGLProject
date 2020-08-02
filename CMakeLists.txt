@@ -31,10 +31,12 @@ set(SOURCE_FILES
         GLUtils.cpp GLUtils.h
         stb/stb_image.cpp stb/stb_image.h
         Texture.cpp Texture.h
-        Size2.h ScopeExit.h)
+        Size2.h
+        ScopeExit.h)
 
 set(TESTS
         tests/Test.h
+        tests/TestMenu.cpp tests/TestMenu.h
         tests/TestClearColor.cpp tests/TestClearColor.h)
 
 set(IMGUI_FILES
