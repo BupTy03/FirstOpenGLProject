@@ -10,6 +10,7 @@
 
 #include "tests/TestClearColor.h"
 #include "tests/TestMenu.h"
+#include "tests/TestTexture2D.h"
 
 #include "imgui/imgui.h"
 #include "imgui/imgui_impl_glfw_gl3.h"
@@ -70,6 +71,7 @@ int main()
 
         test::TestMenu menu;
         menu.AddTest<test::TestClearColor>("Clear Color");
+        menu.AddTest<test::TestTexture2D>("2D Texture");
 
         while (!glfwWindowShouldClose(window))
         {
@@ -78,18 +80,7 @@ int main()
 
             ImGui_ImplGlfwGL3_NewFrame();
 
-            menu.CurrentTest().OnUpdate(0.0f);
-            menu.CurrentTest().OnRender();
-
-            {
-                ImGui::Begin("Test");
-                SCOPE_EXIT { ImGui::End(); };
-
-                if (menu.HasCurrentTest() && ImGui::Button("<-"))
-                    menu.BackToMenu();
-
-                menu.CurrentTest().OnImGuiRender();
-            }
+            test::Show(menu);
 
             ImGui::Render();
             ImGui_ImplGlfwGL3_RenderDrawData(ImGui::GetDrawData());

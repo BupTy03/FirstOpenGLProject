@@ -27,6 +27,8 @@ namespace test
         std::function<TestPtr()> makeTest;
     };
 
+    class TestMenu;
+    void Show(TestMenu& menu);
 
     class TestMenu : public Test
     {

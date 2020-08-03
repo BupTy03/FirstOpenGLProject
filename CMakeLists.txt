@@ -37,7 +37,7 @@ set(SOURCE_FILES
 set(TESTS
         tests/Test.h
         tests/TestMenu.cpp tests/TestMenu.h
-        tests/TestClearColor.cpp tests/TestClearColor.h)
+        tests/TestClearColor.cpp tests/TestClearColor.h tests/TestTexture2D.cpp tests/TestTexture2D.h)
 
 set(IMGUI_FILES
         imgui/imconfig.h

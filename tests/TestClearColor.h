@@ -11,7 +11,6 @@ namespace test
     {
     public:
         TestClearColor();
-        ~TestClearColor() override;
 
         void OnUpdate(float deltaTime) override;
         void OnRender() override;

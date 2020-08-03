@@ -1,9 +1,27 @@
 #include "TestMenu.h"
 
+#include "ScopeExit.h"
 #include "imgui/imgui.h"
 
 
-namespace test {
+namespace test
+{
+
+    void Show(TestMenu &menu)
+    {
+        menu.CurrentTest().OnUpdate(0.0f);
+        menu.CurrentTest().OnRender();
+
+        {
+            ImGui::Begin("Test");
+            SCOPE_EXIT { ImGui::End(); };
+
+            if (menu.HasCurrentTest() && ImGui::Button("<-"))
+                menu.BackToMenu();
+
+            menu.CurrentTest().OnImGuiRender();
+        }
+    }
 
     TestMenu::TestMenu()
         : pCurrent_(nullptr)

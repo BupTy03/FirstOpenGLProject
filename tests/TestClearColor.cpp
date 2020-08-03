@@ -12,14 +12,7 @@ namespace test
     static constexpr std::array<float, 4> DEFAULT_COLOR = {0.2f, 0.3f, 0.8f, 1.0f};
 
 
-    TestClearColor::TestClearColor()
-            : Test()
-            , clearColor_{DEFAULT_COLOR}
-    {
-
-    }
-
-    TestClearColor::~TestClearColor()
+    TestClearColor::TestClearColor() : Test(), clearColor_{DEFAULT_COLOR}
     {
     }
 
